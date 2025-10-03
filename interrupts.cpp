@@ -20,9 +20,10 @@ int main(int argc, char** argv) {
     std::string execution;  //!< string to accumulate the execution output
 
     /******************ADD YOUR VARIABLES HERE*************************/
-
-
-
+     int current_time = 0; 
+     int context_time_ms = 10; 
+     bool use_device_delay_in_isr = true;
+     int fixed_isr_body_ms = 40;
     /******************************************************************/
 
     //parse each line of the input trace file
