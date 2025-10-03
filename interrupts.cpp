@@ -2,7 +2,8 @@
  *
  * @file interrupts.cpp
  * @author Sasisekhar Govind
- *
+ * @author Armeena Sajjad
+ * @author Salma Khai 
  */
 
 #include<interrupts.hpp>
