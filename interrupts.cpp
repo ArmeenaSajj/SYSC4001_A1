@@ -31,9 +31,13 @@ int main(int argc, char** argv) {
         auto [activity, duration_intr] = parse_trace(trace);
 
         /******************ADD YOUR SIMULATION CODE HERE*************************/
-
-
-
+        if (activity == "CPU") {
+            // CPU burst: run for the given duration
+            int cpu_ms = duration_intr;
+            execution += std::to_string(current_time) + ", "
+                       + std::to_string(cpu_ms) + ", CPU burst\n";
+            current_time += cpu_ms;
+        }
         /************************************************************************/
 
     }
