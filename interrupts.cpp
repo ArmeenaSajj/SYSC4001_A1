@@ -64,6 +64,30 @@ int main(int argc, char** argv) {
             execution += std::to_string(current_time) + ", 1, switch to user mode\n";
             current_time += 1;
         }
+        else if (activity == "END_IO") {
+            int dev = duration_intr;
+
+            auto [boil_text, t_after_entry] = intr_boilerplate(current_time, dev, context_time_ms, vectors);
+            execution += boil_text;
+            current_time = t_after_entry;
+
+            execution += std::to_string(current_time) + ", 1, end of I/O "
+                       + std::to_string(dev) + ": interrupt serviced\n";
+            current_time += 1;
+
+            execution += std::to_string(current_time) + ", "
+                       + std::to_string(context_time_ms) + ", context restored\n";
+            current_time += context_time_ms;
+
+            execution += std::to_string(current_time) + ", 1, IRET\n";
+            current_time += 1;
+
+            execution += std::to_string(current_time) + ", 1, switch to user mode\n";
+            current_time += 1;
+        }
+        else {
+            execution += std::to_string(current_time) + ", 0, UNKNOWN activity: " + activity + "\n";
+        }
         /************************************************************************/
 
     }
