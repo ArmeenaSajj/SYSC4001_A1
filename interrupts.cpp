@@ -38,6 +38,32 @@ int main(int argc, char** argv) {
                        + std::to_string(cpu_ms) + ", CPU burst\n";
             current_time += cpu_ms;
         }
+        else if (activity == "SYSCALL") {
+            int dev = duration_intr;
+
+            auto [boil_text, t_after_entry] = intr_boilerplate(current_time, dev, context_time_ms, vectors);
+            execution += boil_text;
+            current_time = t_after_entry;
+
+            int isr_body_ms = use_device_delay_in_isr
+                              ? ((dev >= 0 && dev < (int)delays.size()) ? delays.at(dev) : fixed_isr_body_ms)
+                              : fixed_isr_body_ms;
+
+            execution += std::to_string(current_time) + ", "
+                       + std::to_string(isr_body_ms) + ", ISR body for device "
+                       + std::to_string(dev) + "\n";
+            current_time += isr_body_ms;
+
+            execution += std::to_string(current_time) + ", "
+                       + std::to_string(context_time_ms) + ", context restored\n";
+            current_time += context_time_ms;
+
+            execution += std::to_string(current_time) + ", 1, IRET\n";
+            current_time += 1;
+
+            execution += std::to_string(current_time) + ", 1, switch to user mode\n";
+            current_time += 1;
+        }
         /************************************************************************/
 
     }
