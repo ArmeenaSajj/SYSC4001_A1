@@ -26,16 +26,15 @@ int main(int argc, char** argv) {
      int fixed_isr_body_ms = 40;
     /******************************************************************/
 
-    //parse each line of the input trace file
+     // parse each line of the input trace file
     while(std::getline(input_file, trace)) {
         auto [activity, duration_intr] = parse_trace(trace);
 
         /******************ADD YOUR SIMULATION CODE HERE*************************/
         if (activity == "CPU") {
-            // CPU burst: run for the given duration
             int cpu_ms = duration_intr;
             execution += std::to_string(current_time) + ", "
-                       + std::to_string(cpu_ms) + ", CPU burst\n";
+                       + std::to_string(cpu_ms) + ", CPU Burst\n";
             current_time += cpu_ms;
         }
         else if (activity == "SYSCALL") {
@@ -45,14 +44,24 @@ int main(int argc, char** argv) {
             execution += boil_text;
             current_time = t_after_entry;
 
-            int isr_body_ms = use_device_delay_in_isr
-                              ? ((dev >= 0 && dev < (int)delays.size()) ? delays.at(dev) : fixed_isr_body_ms)
-                              : fixed_isr_body_ms;
+            int total_isr = use_device_delay_in_isr
+                            ? ((dev >= 0 && dev < (int)delays.size()) ? delays.at(dev) : fixed_isr_body_ms)
+                            : fixed_isr_body_ms;
+            int part1 = std::min(isr_stage_ms, total_isr);
+            int part2 = std::min(isr_stage_ms, std::max(0, total_isr - part1));
+            int part3 = std::max(0, total_isr - part1 - part2);
 
             execution += std::to_string(current_time) + ", "
-                       + std::to_string(isr_body_ms) + ", ISR body for device "
-                       + std::to_string(dev) + "\n";
-            current_time += isr_body_ms;
+                       + std::to_string(part1) + ", SYSCALL: run the ISR (device driver)\n";
+            current_time += part1;
+
+            execution += std::to_string(current_time) + ", "
+                       + std::to_string(part2) + ", transfer data from device to memory\n";
+            current_time += part2;
+
+            execution += std::to_string(current_time) + ", "
+                       + std::to_string(part3) + ", check for errors\n";
+            current_time += part3;
 
             execution += std::to_string(current_time) + ", "
                        + std::to_string(context_time_ms) + ", context restored\n";
@@ -71,9 +80,19 @@ int main(int argc, char** argv) {
             execution += boil_text;
             current_time = t_after_entry;
 
-            execution += std::to_string(current_time) + ", 1, end of I/O "
-                       + std::to_string(dev) + ": interrupt serviced\n";
-            current_time += 1;
+            int total_isr = use_device_delay_in_isr
+                            ? ((dev >= 0 && dev < (int)delays.size()) ? delays.at(dev) : fixed_isr_body_ms)
+                            : fixed_isr_body_ms;
+            int part1 = std::min(isr_stage_ms, total_isr);
+            int part2 = std::max(0, total_isr - part1);
+
+            execution += std::to_string(current_time) + ", "
+                       + std::to_string(part1) + ", ENDIO: run the ISR (device driver)\n";
+            current_time += part1;
+
+            execution += std::to_string(current_time) + ", "
+                       + std::to_string(part2) + ", check device status\n";
+            current_time += part2;
 
             execution += std::to_string(current_time) + ", "
                        + std::to_string(context_time_ms) + ", context restored\n";
@@ -89,7 +108,6 @@ int main(int argc, char** argv) {
             execution += std::to_string(current_time) + ", 0, UNKNOWN activity: " + activity + "\n";
         }
         /************************************************************************/
-
     }
 
     input_file.close();
