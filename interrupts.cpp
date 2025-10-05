@@ -24,6 +24,7 @@ int main(int argc, char** argv) {
      int context_time_ms = 10; 
      bool use_device_delay_in_isr = true;
      int fixed_isr_body_ms = 40;
+     int isr_stage_ms = 40;
     /******************************************************************/
 
      // parse each line of the input trace file
