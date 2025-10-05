@@ -25,6 +25,7 @@ int main(int argc, char** argv) {
      bool use_device_delay_in_isr = true;
      int fixed_isr_body_ms = 40;
      int isr_stage_ms = 40;
+    
     /******************************************************************/
 
      // parse each line of the input trace file
@@ -32,12 +33,14 @@ int main(int argc, char** argv) {
         auto [activity, duration_intr] = parse_trace(trace);
 
         /******************ADD YOUR SIMULATION CODE HERE*************************/
+        
         if (activity == "CPU") {
             int cpu_ms = duration_intr;
             execution += std::to_string(current_time) + ", "
                        + std::to_string(cpu_ms) + ", CPU Burst\n";
             current_time += cpu_ms;
         }
+        
         else if (activity == "SYSCALL") {
             int dev = duration_intr;
 
@@ -74,6 +77,7 @@ int main(int argc, char** argv) {
             execution += std::to_string(current_time) + ", 1, switch to user mode\n";
             current_time += 1;
         }
+            
         else if (activity == "END_IO") {
             int dev = duration_intr;
 
@@ -105,6 +109,7 @@ int main(int argc, char** argv) {
             execution += std::to_string(current_time) + ", 1, switch to user mode\n";
             current_time += 1;
         }
+            
         else {
             execution += std::to_string(current_time) + ", 0, UNKNOWN activity: " + activity + "\n";
         }
