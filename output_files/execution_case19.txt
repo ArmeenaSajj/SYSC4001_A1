@@ -1,0 +1,22 @@
+0, 51, CPU Burst
+51, 1, switch to kernel mode
+52, 30, context saved
+82, 1, find vector 14 in memory position 0x001C
+83, 1, load address 0X0165 into the PC
+84, 40, SYSCALL: run the ISR (device driver)
+124, 40, transfer data from device to memory
+164, 160, check for errors
+324, 30, context restored
+354, 1, IRET
+355, 1, switch to user mode
+356, 15, CPU Burst
+371, 1, switch to kernel mode
+372, 30, context saved
+402, 1, find vector 14 in memory position 0x001C
+403, 1, load address 0X0165 into the PC
+404, 40, ENDIO: run the ISR (device driver)
+444, 200, check device status
+644, 30, context restored
+674, 1, IRET
+675, 1, switch to user mode
+676, 10, CPU Burst
